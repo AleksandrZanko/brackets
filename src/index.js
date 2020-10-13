@@ -1,28 +1,23 @@
 module.exports = function check(str, bracketsConfig) {
-  let leftSc = 0;
-  let rightSc = 0;
-  let leftKv = 0;
-  let rightKv = 0;
-  let vertical = 0;
-  for(let i = 0; i < str.length; i++) {
-  	if(str[i] == '(') {
-  		leftSc++;
-  	} else if(str[i] == ')') {
-  		rightSc++;
-  	} else if(str[i] == '[') {
-  		leftKv++;
-  	} else if (str[i] == ']') {
-  		rightKv++;
-  	} else if (str[i] == '|') {
-  		vertical++;
-  	}
-  }
+	var stack = [];
+	var last;
 
-  let verticalResult = vertical % 2;
+	if(str[i] == '|' && str[i+1] != '|') {
+		return false;
+	}
 
-  if((leftSc == rightSc) && (leftKv == rightKv) && verticalResult == 0) {
-  	return true;
-  } else {
-  	return false;
-  }
+	for (var i = 0; i < str.length; i++) {
+        if (str[i] == '[' || str[i] == '(' || str[i] == '{') {
+        	stack.push(str[i]);
+        } else if (str[i] == ']' || str[i] == ')' || str[i] == '}') {
+            if (stack.length) { 
+                last = stack[stack.length - 1]; 
+                if ((last == '[' && str[i] == ']') || (last == '(' && str[i] == ')') ||
+                	(last == '{' && str[i] == '}')) {
+                    stack.pop();
+            }
+            } else return false;
+        }
+    }
+    return (!stack.length);
 }
